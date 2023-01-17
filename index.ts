@@ -35,8 +35,19 @@ app.post('/new-message', async (req, res) => {
         return req.sendStatus(400)
     }
 
-    //TODO
+    await doc.loadInfo()
+    const sheet = doc.sheetsByIndex[0]
+    const rows = await sheet.getRows()
+    const dataFromSpreadSheet = rows.reduce((obj, row) => {
+        if (row.date) {
+            const todo = { text: row.text, done: row.done }
+            obj[row.date] = obj[row.date] ? [...obj[row.date], todo] : [todo]
+        }
+        return obj
+    }, {})
 
+    //TODO
+    //generate response
     
     try {
         await axios.post(TELELGRAM_URI, {
