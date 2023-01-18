@@ -48,7 +48,20 @@ app.post('/new-message', async (req, res) => {
 
     //TODO
     //generate response
+    let responseText = 'I have something to say.'
     
+    if (messageText === 'joke') {
+        try {
+            const response = await axios(JOKE_API)
+            responseText = response.data.joke
+        } catch (e) {
+            console.log(e)
+            res.send(e)
+        }
+    } else if (/\d\d\.\d\d/.test(messageText)) {
+        responseText = dataFromSpreadSheet[messageText] || 'You have nothing to do on this day.'
+    }
+
     try {
         await axios.post(TELELGRAM_URI, {
             chat_id: chatID,
